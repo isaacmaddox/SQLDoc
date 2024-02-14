@@ -6,18 +6,19 @@ public class SQLParserDriver {
    public static final String RED_BRIGHT = "\033[0;91m";
    public static final String YELLOW_BOLD_BRIGHT = "\033[1;93m";
    public static final int DESC_LENGTH = 50;
+   public static final String DEFAULT_FILENAME;
    
 	public static void main(String[] args) {		
 		if (args.length > 0) {
 		   if (args[0].equals("-help")) {
 		      printHelp();
 		   } else if (args.length == 1) {
-		      runParser(args[0], "-md", "sqldoc");
+		      runParser(args[0], "-md", DEFAULT_FILENAME);
 		   } else {
 		      runParser(args);
 		   }
 		} else {
-		   runParser(System.getProperty("user.dir"), "-md", "sqldoc");
+		   runParser(System.getProperty("user.dir"), "-md", DEFAULT_FILENAME);
 		}
 	   
 		// For testing purposes:
@@ -44,7 +45,7 @@ public class SQLParserDriver {
 	   
 	   switch (args[1]) {
 	      case "-md":
-	         String file = args.length >= 3 ? args[2] : "sqldoc";
+	         String file = args.length >= 3 ? args[2] : DEFAULT_FILENAME;
 	         p.printMD(file);
 	         System.out.println("Finished writing to " + file);
 	         break;
