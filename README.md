@@ -80,7 +80,7 @@ This table has no relationships
 | Name | Type | Unique | NULL | Default | On Update | Comment |
 |---|---|---|---|---|---|---|
 | post_id | INT UNSIGNED | PRI | NO | NULL |  |  |
-| user_id | INT UNSIGNED UNSIGNED |  | NO | NULL |  |  |
+| user_id | INT UNSIGNED |  | NO | NULL |  |  |
 | parent_id | INT UNSIGNED |  | YES | NULL |  |  |
 | body | VARCHAR(255) |  | NO | NULL |  |  |
 | share_count | INT UNSIGNED |  | NO | 0 |  |  |
