@@ -129,7 +129,9 @@ public class SQLParser {
 	
 	private String tableOfContentsMD() {
 	   int max_size = Math.max(tables.size(), procedures.size());
-	   String r = SQLEntity.mdTableHeaderS("Tables", "Procedures");
+	   String r = "# Table of Contents\n";
+	   
+	   r += SQLEntity.mdTableHeaderS("Tables", "Procedures");
 	   
 	   for (int i = 0; i < max_size - 1; ++i) {
 	      r += "| ";
