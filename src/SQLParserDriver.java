@@ -6,7 +6,7 @@ public class SQLParserDriver {
    public static final String RED_BRIGHT = "\033[0;91m";
    public static final String YELLOW_BOLD_BRIGHT = "\033[1;93m";
    public static final int DESC_LENGTH = 50;
-   public static final String DEFAULT_FILENAME;
+   public static final String DEFAULT_FILENAME = "sqldoc";
    
 	public static void main(String[] args) {		
 		if (args.length > 0) {
