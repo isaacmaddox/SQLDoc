@@ -54,7 +54,7 @@ public class SQLField extends SQLEntity {
    }
    
    private String getDefault() {
-      return defaultValue == null ? "NULL" : defaultValue;
+      return defaultValue == null ? "NULL" : defaultValue.replaceAll("'|\"", "");
    }
       
    private String getOnUpdate() {

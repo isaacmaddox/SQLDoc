@@ -38,6 +38,14 @@ public class SQLEntity {
 	   return r;
 	}
 	
+	public static String mdTableHeaderS(String ...cols) {
+	   return new SQLEntity().mdTableHeader(cols);
+	}
+	
+	public static String mdTableHRowS(String ...cols) {
+	   return new SQLEntity().mdTableRow(cols);
+	}
+	
 	public String getMDLink() {
       return "[" + name + "](" + getLinkHref() + ")";
    }
@@ -51,6 +59,6 @@ public class SQLEntity {
 	}
 	
 	public String getCommentMD() {
-	   return comment.replaceAll("@see\\s+(.+)", "[See `$1`](#$1)");
+	   return comment.replaceAll("@see\\s+(.+)", "\n[See `$1`](#$1)\n");
 	}
 }

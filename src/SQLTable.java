@@ -7,10 +7,10 @@ public class SQLTable extends SQLEntity {
    private ArrayList<SQLIndex> indexes;
    private ArrayList<SQLForeignKey> foreignKeys;
    final private String removePattern = "(?i)(UNIQUE INDEX.+|FOREIGN[^,]+,|INDEX.+)";
-   final private Pattern fieldPattern = Pattern.compile("(?<name>\\S+)(?:\\s)(?<type>(?:\\sUNSIGNED|\\sPRECISION|\\S)+)\\s(?<modifiers>(?:[^,\\n]+))(?:,)?(?:\\s)?(?:--\\s+(?<comment>.+))?");
+   final private Pattern fieldPattern = Pattern.compile("(?<name>\\S+)(?:\\s)(?<type>(?:\\sUNSIGNED|\\sPRECISION|\\S)+)\\s(?<modifiers>(?:[^,\\-\\n]+))?(?:,)?(?:\\s+)?(?:--\\s+(?<comment>.+))?");
    final private Pattern indexPattern = Pattern.compile("(?<unique>UNIQUE(?:\\s+)(?:\\n)?)?INDEX\\s+(?:\\n)?(?<name>\\S+)\\s+\\((?<columns>[^)]+|\\n+)\\)(?:,)?(?:\\s+--\\s+(?<comment>.+))?");
    final private Pattern foreignPattern = Pattern.compile("FOREIGN KEY\\s+\\((?<name>\\S+)\\)(?:\\s+--\\s+(?<comment>.+))?(?:\\s+|\\n)REFERENCES\\s+(?<table>[^(]+)\\((?<column>[^)]+)\\)(?:\\s|\\n)(?<ons>[^,]+)", Pattern.CASE_INSENSITIVE);
-   final private int FIELD_TABLE_WIDTH = 134;
+   final private int FIELD_TABLE_WIDTH = 157;
    final private int INDEX_TABLE_WIDTH = 119;
    final private int KEY_TABLE_WIDTH = 129;
    
@@ -132,7 +132,7 @@ public class SQLTable extends SQLEntity {
       r += "### Indexes\n";
       
       if (indexes.size() == 0) {
-         r += "This table has no indexes.\n";
+         r += "This table has no explicit indexes.\n";
       } else {
          r += mdTableHeader("Name", "Unique", "Columns", "Comment");
          

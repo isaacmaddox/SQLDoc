@@ -20,8 +20,9 @@ public class SQLParserDriver {
 		   runParser(System.getProperty("user.dir"), "-md", "sqldoc");
 		}
 	   
-//	   runParser("C:\\programming\\tread", "-md", "C:\\Users\\isaac\\Downloads\\example", "Tread");
-//	   runConsoleParser("C:\\programming\\tread");
+		// For testing purposes:
+//	   runParser("C:\\programming\\tread", "-md", "C:\\programming\\tread\\example.md", "Tread");
+//	   runConsoleParser(new SQLParser(new File("C:\\programming\\tread")));
 	}
 
 	private static void runParser(final String ...args) {
@@ -66,7 +67,7 @@ public class SQLParserDriver {
 	   printCmd("sqldoc [<path>]", "Run the program in the specified directory. Output to a MD file in the current working directory");
 	   printCmd("sqldoc [<path>] [-md|-c]", "Run the program in the specified directory. Output to either a MD file or to the console");
 	   printCmd("sqldoc [<path>] -md [<output>]", "Run the program in the specified directory. Output to a MD file named by the output argument");
-	   printCmd("sqldoc [<path>] -md [<output>] [<title>]", "Run the program in the specified directory. Output to a MD file named by the output argument. The title of the markdown document is specified by the title argument");
+	   printCmd("sqldoc [<path>] -md [<output>] [<title>]", "Run the program in the specified directory. Output to a MD file named by the output argument. The   title of the markdown document is specified by the title argument");
 	   printCmdColor("sqldoc -help", "Display this menu");
 	}
 	
