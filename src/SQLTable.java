@@ -41,120 +41,120 @@ public class SQLTable extends SQLEntity {
    
    @Override
    public String toString() {
-      String r = "TABLE " + name + "\n";
-      r += "- " + comment.replaceAll("\n", "\n  ") + "\n";
+      StringBuilder sb = new StringBuilder(String.format("TABLE %s%n", name));
+      sb.append(String.format("- %s%n", comment.replaceAll("\n", "")));
       
       if (fields.size() == 0) {
-         r += "No fields\n";
+         sb.append("No fields\n");
       } else {
-         r += tableLine(FIELD_TABLE_WIDTH);
+         sb.append(tableLine(FIELD_TABLE_WIDTH));
          
-         r += String.format("| \033[3m%-" + (FIELD_TABLE_WIDTH - 4) + "s\033[0m |%n", "COLUMNS");
+         sb.append(String.format("| \033[3m%-" + (FIELD_TABLE_WIDTH - 4) + "s\033[0m |%n", "COLUMNS"));
          
-         r += tableLine(FIELD_TABLE_WIDTH);
+         sb.append(tableLine(FIELD_TABLE_WIDTH));
          
-         r += String.format(FIELD_TEMPLATE, "Name", "Type", "Unique", "NULL", "Default", "On Update", "Comment");
+         sb.append(String.format(FIELD_TEMPLATE, "Name", "Type", "Unique", "NULL", "Default", "On Update", "Comment"));
          
-         r += tableLine(FIELD_TABLE_WIDTH);
+         sb.append(tableLine(FIELD_TABLE_WIDTH));
          
          for (SQLField field : fields) {
-            r += field.toString();
+            sb.append(field.toString());
          }
          
-         r += tableLine(FIELD_TABLE_WIDTH);
+         sb.append(tableLine(FIELD_TABLE_WIDTH));
       }
       
-      r += "\n";
+      sb.append("\n");
       
       if (indexes.size() == 0) {
-         r += "No indexes\n";
+         sb.append("No indexes\n");
       } else {
-         r += tableLine(INDEX_TABLE_WIDTH);
+         sb.append(tableLine(INDEX_TABLE_WIDTH));
          
-         r += String.format("| \033[3m%-" + (INDEX_TABLE_WIDTH - 4) + "s\033[0m |%n", "INDEXES");
+         sb.append(String.format("| \033[3m%-" + (INDEX_TABLE_WIDTH - 4) + "s\033[0m |%n", "INDEXES"));
          
-         r += tableLine(INDEX_TABLE_WIDTH);
+         sb.append(tableLine(INDEX_TABLE_WIDTH));
          
-         r += String.format(INDEX_TEMPLATE, "Name", "Unique", "Columns", "Comment");
+         sb.append(String.format(INDEX_TEMPLATE, "Name", "Unique", "Columns", "Comment"));
          
-         r += tableLine(INDEX_TABLE_WIDTH);
+         sb.append(tableLine(INDEX_TABLE_WIDTH));
          
          for (SQLIndex i : indexes) {
-            r += i.toString();
+            sb.append(i.toString());
          }
          
-         r += tableLine(INDEX_TABLE_WIDTH);
+         sb.append(tableLine(INDEX_TABLE_WIDTH));
       }
       
-      r += "\n";
+      sb.append("\n");
       
       if (foreignKeys.size() == 0) {
-         r += "No foreign keys\n";
+         sb.append("No foreign keys\n");
       } else {
-         r += tableLine(KEY_TABLE_WIDTH);
+         sb.append(tableLine(KEY_TABLE_WIDTH));
          
-         r += String.format("| \033[3m%-" + (KEY_TABLE_WIDTH - 4) + "s\033[0m |%n", "FOREIGN KEYS");
+         sb.append(String.format("| \033[3m%-" + (KEY_TABLE_WIDTH - 4) + "s\033[0m |%n", "FOREIGN KEYS"));
          
-         r += tableLine(KEY_TABLE_WIDTH);
+         sb.append(tableLine(KEY_TABLE_WIDTH));
          
-         r += String.format(FOREIGN_TEMPLATE, "Name", "References", "On Delete", "On Update", "Comment");
+         sb.append(String.format(FOREIGN_TEMPLATE, "Name", "References", "On Delete", "On Update", "Comment"));
          
-         r += tableLine(KEY_TABLE_WIDTH);
+         sb.append(tableLine(KEY_TABLE_WIDTH));
          
          for (SQLForeignKey k : foreignKeys) {
-            r += k.toString();
+            sb.append(k.toString());
          }
          
-         r += tableLine(KEY_TABLE_WIDTH);
+         sb.append(tableLine(KEY_TABLE_WIDTH));
       }
       
-      return r;
+      return sb.toString();
    }
    
    public String toMD() {
-      String r = "## `" + name + "`\n";
-      r += "> " + getCommentMD() + "\n\n" + backToTop();
+      StringBuilder sb = new StringBuilder(String.format("## `%s`%n", name));
+      sb.append("> " + getCommentMD() + "\n\n" + backToTop());
       
-      r += "### Fields\n";
+      sb.append("### Fields\n");
       
       if (fields.size() == 0) {
-         r += "This table has no fields.\n";
+         sb.append("This table has no fields.\n");
       } else {
-         r += mdTableHeader("Name", "Type", "Unique", "NULL", "Default", "On Update", "Comment");
+         sb.append(mdTableHeader("Name", "Type", "Unique", "NULL", "Default", "On Update", "Comment"));
          
          for (SQLField f : fields) {
-            r += f.toMD();
+            sb.append(f.toMD());
          }
       }
       
-      r += "\n";
+      sb.append("\n");
       
-      r += "### Indexes\n";
+      sb.append("### Indexes\n");
       
       if (indexes.size() == 0) {
-         r += "This table has no explicit indexes.\n";
+         sb.append("This table has no explicit indexes.\n");
       } else {
-         r += mdTableHeader("Name", "Unique", "Columns", "Comment");
+         sb.append(mdTableHeader("Name", "Unique", "Columns", "Comment"));
          
          for (SQLIndex i : indexes) {
-            r += i.toMD();
+            sb.append(i.toMD());
          }
       }
       
-      r += "\n";
+      sb.append("\n");
       
-      r += "### Relationships\n";
+      sb.append("### Relationships\n");
       
       if (foreignKeys.size() == 0) {
-         r += "This table has no relationships";
+         sb.append("This table has no relationships");
       } else {
-         r += mdTableHeader("Name", "References", "On Delete", "On Update", "Comment");
+         sb.append(mdTableHeader("Name", "References", "On Delete", "On Update", "Comment"));
          
          for (SQLForeignKey k : foreignKeys) {
-            r += k.toMD();
+            sb.append(k.toMD());
          }
       }
       
-      return r;
+      return sb.toString();
    }
 }

@@ -27,45 +27,45 @@ public class SQLProcedure extends SQLEntity {
 	
 	@Override
 	public String toString() {
-		String r = "PROCEDURE " + name + "\n";
-		r += "- " + comment.replaceAll("\n", "\n  ") + "\n";
+		StringBuilder sb = new StringBuilder(String.format("PROCEDURE %s%n", name));
+		sb.append("- " + comment.replaceAll("\n", "\n  ") + "\n");
 		
 		if (params.size() == 0) {
-		   r += "No parameters\n";
+		   sb.append("No parameters\n");
 		} else {
-   		r += tableLine(TABLE_WIDTH);
+   		sb.append(tableLine(TABLE_WIDTH));
    		
-   		r += String.format(PARAM_TEMPLATE, "Name", "Type", "Comment");
+   		sb.append(String.format(PARAM_TEMPLATE, "Name", "Type", "Comment"));
    		
-   		r += tableLine(TABLE_WIDTH);
+   		sb.append(tableLine(TABLE_WIDTH));
    		
    		for (SQLParam par : params) {
-   			r += par.toString();
+   			sb.append(par.toString());
    		}
    		
-   		r += tableLine(TABLE_WIDTH);
+   		sb.append(tableLine(TABLE_WIDTH));
 		}
 		
-		return r;
+		return sb.toString();
 	}
 	
 	public String toMD() {
-	   String r = "## `" + name + "()`\n";
-	   r += "> " + getCommentMD() + "\n\n" + backToTop();
+	   StringBuilder sb = new StringBuilder(String.format("## `%s()`%n", name));
+	   sb.append("> " + getCommentMD() + "\n\n" + backToTop());
 	   
 	   if (params.size() == 0) {
-	      r += "No parameters";
+	      sb.append("No parameters");
 	   } else {
-   	   r += "### Parameters\n";
+   	   sb.append("### Parameters\n");
    	   
-   	   r += mdTableHeader("Name", "Type", "Comment");
+   	   sb.append(mdTableHeader("Name", "Type", "Comment"));
    	   
    	   for (SQLParam p : params) {
-   	      r += p.toMD();
+   	      sb.append(p.toMD());
    	   }
 	   }
 	   
-	   return r;
+	   return sb.toString();
 	}
 	
 	@Override

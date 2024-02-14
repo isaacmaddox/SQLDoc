@@ -27,15 +27,15 @@ public class SQLEntity {
 	}
 	
 	protected String mdTableHeader(String ...cols) {
-	   String r = mdTableRow(cols);
+	   StringBuilder sb = new StringBuilder(mdTableRow(cols));
 	   
 	   for (int i = 0; i < cols.length; ++i) {
-	      r += "|---";
+	      sb.append("|---");
 	   }
 	   
-	   r += "|\n";
+	   sb.append("|\n");
 	   
-	   return r;
+	   return sb.toString();
 	}
 	
 	public static String mdTableHeaderS(String ...cols) {
