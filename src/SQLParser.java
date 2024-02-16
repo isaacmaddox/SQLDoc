@@ -17,30 +17,26 @@ public class SQLParser {
 	private int tableCount;
 	private String title;
 	final private Pattern docPattern = Pattern.compile("\\/\\*\\*(?:\\s+|\\n+)?(?<comment>(?:[^/]+){1,})\\*\\/(?:\\n)?CREATE(?:\\s+)(?<type>\\S+)(?:\\s+)(?<name>[^\\s()]+)(?:\\s+)?\\((?:\\n)?(?<args>(?:[^)].+\\n+){1,})?\\)", Pattern.CASE_INSENSITIVE);
-	final private Pattern titlePattern = Pattern.compile("(?:\\\\|\\/)(?<title>[^\\\\\\/.]+)(?:\\.\\S+)?$");
+	private boolean quietMode;
 	
-	public SQLParser(final File file) {
+	public SQLParser(final File file, String newTitle) {
 		path = file;
 		procedures = new ArrayList<SQLProcedure>();
 		tables = new ArrayList<SQLTable>();
 		fileCount = 0;
 		procCount = 0;
 		tableCount = 0;
-		Matcher tm = titlePattern.matcher(file.getAbsolutePath().replaceAll("\\\\\\.", ""));
-		
-		title = tm.find() ? tm.group("title") : "SQLDoc Generated Documentation";
-		
-		title = Character.toUpperCase(title.charAt(0)) + title.substring(1);
+		quietMode = false;
+		title = newTitle;
 	}
 	
-	public SQLParser(final File file, String newTitle) {
-	   this(file);
-	   title = newTitle;
-	}
-	
-	public void parse() {
+	public void parse(boolean quiet) {
+	   quietMode = quiet;
+	   
 		parse(path);
-		System.out.println("Finished reading " + fileCount + " file" + (fileCount > 1 ? 's' : "") + '.');
+		
+		if (!quietMode)
+		   System.out.println("Finished reading " + fileCount + " file" + (fileCount > 1 ? 's' : "") + '.');
 	}
 	
 	public void parse(final File file) {
@@ -100,9 +96,11 @@ public class SQLParser {
    	   output.println("\n---\n[Check out SQLDoc on Github](https://github.com/isaacmaddox/SQLDoc)");
    	   
    	   output.close();
+   	   
+   	   if (!quietMode)
+   	      System.out.println("Finished writing to " + location);
 	   } catch (Exception e) {
-	      System.out.println("SQLDoc ran into an error: ");
-	      System.out.println(e.getMessage());
+	      SQLDocDriver.printError(String.format("SQLDoc ran into an error:%n\t%s", e.getMessage()));
 	   }
 	}
 	
@@ -130,46 +128,42 @@ public class SQLParser {
 	
 	private void processFile(final File file) {
 		try {
-			if (file.isDirectory()) {
-				parse(file);
-			} else {
-			   String path = file.getAbsolutePath();
-			   String ext = path.substring(path.lastIndexOf('.') + 1);
-			   
-			   if (!ext.equals("sql")) return;
-			   
-				Scanner inputFR = new Scanner(file);
-				String line = "";
-				String buffer = "";
-				
-				while (inputFR.hasNextLine()) {
-					line = inputFR.nextLine();
-					
-					if (!line.trim().startsWith("/**") && buffer.isEmpty()) {
-						continue;
-					}
-										
-					buffer += (!buffer.isEmpty() ? "\n" : "") + line;
-					
-					
-					Matcher m = docPattern.matcher(buffer);
-					boolean matches = m.find();
-					
-					if (!matches) {
-						continue;
-					} else {
-						processDoc(m.group("name"), m.group("type"), m.group("comment"), m.group("args"));
-						buffer = "";
-					}
-				}
-				
-				inputFR.close();
-				if (procCount > 0)
-				   System.out.println("[" + file.getName() + "] Found " + procCount + " procedures");
-				if (tableCount > 0) {
-				   System.out.println("[" + file.getName() + "] Found " + tableCount + " tables");
-				}
-			}
+   	   String path = file.getAbsolutePath();
+   	   String ext = path.substring(path.lastIndexOf('.') + 1);
+   	   
+   	   if (!ext.equals("sql")) return;
+   	   
+   		Scanner inputFR = new Scanner(file);
+   		String line = "";
+   		String buffer = "";
+   		
+   		while (inputFR.hasNextLine()) {
+   			line = inputFR.nextLine();
+   			
+   			if (!line.trim().startsWith("/**") && buffer.isEmpty()) {
+   				continue;
+   			}
+   								
+   			buffer += (!buffer.isEmpty() ? "\n" : "") + line;
+   			
+   			
+   			Matcher m = docPattern.matcher(buffer);
+   			boolean matches = m.find();
+   			
+   			if (!matches) {
+   				continue;
+   			} else {
+   				processDoc(m.group("name"), m.group("type"), m.group("comment"), m.group("args"));
+   				buffer = "";
+   			}
+   		}
+   		
+   		inputFR.close();
+   		if (procCount > 0 && !quietMode)
+   		   System.out.println("[" + file.getName() + "] Found " + procCount + " procedures");
+   		if (tableCount > 0 && !quietMode) {
+   		   System.out.println("[" + file.getName() + "] Found " + tableCount + " tables");
+   		}
 		} catch (FileNotFoundException e) {
 			System.out.println("Couldn't find file");
 		}
