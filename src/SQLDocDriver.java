@@ -3,10 +3,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLDocDriver {
+    private final static String VERSION = "\033[1;93mSQLDoc\033[0;93m v0.0.1\033[0m";
     private static StringBuilder cmd = new StringBuilder();
-    private static char selectedOutput;
-    private static String fileName;
-    private static String title;
     private final static int SETTING_DESC_LENGTH = 65;
     private final static String SETTING_TEMPLATE = " %s%-35.35s\033[0m %-" + SETTING_DESC_LENGTH + "s %n";
 
@@ -14,9 +12,9 @@ public class SQLDocDriver {
         try {
             // Initialize settings and get values
             SQLDocSettings.init();
-            selectedOutput = SQLDocSettings.getSettingAsChar("output");
-            fileName = SQLDocSettings.getSetting("filename");
-            title = SQLDocSettings.getSetting("title");
+            char selectedOutput = SQLDocSettings.getSettingAsChar("output");
+            String fileName = SQLDocSettings.getSetting("filename");
+            String title = SQLDocSettings.getSetting("title");
 
             // Re-build command to make flag detection easier
             for (String s : args)
@@ -34,6 +32,12 @@ public class SQLDocDriver {
                 return;
             } else if (cmd.indexOf("set ") > -1) { // Update settings
                 SQLDocSettings.updateSettings(cmd.toString());
+                return;
+            }
+
+
+            if (checkForFlag("v") || checkForFlag("version")) {
+                System.out.println(VERSION);
                 return;
             }
 
