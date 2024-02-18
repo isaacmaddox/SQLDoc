@@ -35,9 +35,11 @@ public class SQLDocDriver {
                 return;
             }
 
-
             if (checkForFlag("v") || checkForFlag("version")) {
                 System.out.println(VERSION);
+                if (System.getenv("SQLDOC_HOME") == null) {
+                    printError("There is a problem with your installation. You are missing the %SQLDOC_HOME% environment variable.", false);
+                }
                 return;
             }
 
