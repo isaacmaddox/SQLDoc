@@ -27,11 +27,11 @@ public class SQLForeignKey extends SQLEntity {
 
     @Override
     public String toString() {
-        return String.format(FOREIGN_TEMPLATE, name, getRef(), getOnDelete(), getOnUpdate(), comment);
+        return String.format(FOREIGN_TEMPLATE, name, getRef(), getOnDelete(), getOnUpdate(), getPlainComment());
     }
 
     public String toMD() {
-        return mdTableRow(name, getRefMD(), getOnDelete(), getOnUpdate(), comment);
+        return mdTableRow(name, getRefMD(), getOnDelete(), getOnUpdate(), getCommentMD());
     }
 
     public String getOnDelete() {

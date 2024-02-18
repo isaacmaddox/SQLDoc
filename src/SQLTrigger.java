@@ -1,14 +1,8 @@
 public class SQLTrigger extends SQLEntity {
     private final String action;
     private final String table;
+    private final int TABLE_WIDTH = 123;
 
-    /**
-     * Description
-     * @param name
-     * @param comment
-     * @param newAction
-     * @param newTable
-     */
     public SQLTrigger(String name, String comment, String newAction, String newTable) {
         super(name, comment);
         action = newAction;
@@ -17,12 +11,29 @@ public class SQLTrigger extends SQLEntity {
 
     @Override
     public String toString() {
-        return String.format(TRIGGER_TEMPLATE, name, action, table, comment);
+        StringBuilder s = new StringBuilder();
+
+        s.append(String.format("TRIGGER %s%n", name));
+        s.append(String.format("- %s%n", getPlainComment()));
+        s.append(tableLine(TABLE_WIDTH));
+        s.append(String.format(TRIGGER_TEMPLATE, "Name", "Run", "On Table", "Comment"));
+        s.append(tableLine(TABLE_WIDTH));
+        s.append(String.format(TRIGGER_TEMPLATE, name, action, table, getPlainComment()));
+        s.append(tableLine(TABLE_WIDTH));
+
+        return s.toString();
     }
 
     public String toMD() {
-        return String.format("## `%s()`%n", name) + "> " + getCommentMD() + "\n\n" + backToTop() +
-                "### On table: " + getTableLinkMD();
+        StringBuilder s = new StringBuilder();
+
+        s.append(String.format("## `%s`%n", name)).append("> ").append(getCommentMD()).append("\n\n").append(backToTop());
+
+        s.append(mdTableHeader("Run", "On table"));
+
+        s.append(mdTableRow(action, table));
+
+        return s.toString();
     }
 
     private String getTableLinkMD() {

@@ -8,10 +8,10 @@ public class SQLParam extends SQLEntity {
 
     @Override
     public String toString() {
-        return String.format(PARAM_TEMPLATE, name, type, comment);
+        return String.format(PARAM_TEMPLATE, name, type, getPlainComment());
     }
 
     public String toMD() {
-        return mdTableRow(name, type, comment);
+        return mdTableRow(name, type, getCommentMD());
     }
 }

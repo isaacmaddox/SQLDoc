@@ -4,13 +4,9 @@ import java.util.regex.Pattern;
 
 public class SQLTable extends SQLEntity {
     final private String removePattern = "(?i)(UNIQUE INDEX.+|FOREIGN[^,]+,|INDEX.+)";
-    final private Pattern fieldPattern = Pattern.compile(
-            "(?<name>\\S+)(?:\\s)(?<type>(?:\\sUNSIGNED|\\sPRECISION|\\S)+)\\s(?<modifiers>(?:[^,\\-\\n]+))?(?:,)?(?:\\s+)?(?:--\\s+(?<comment>.+))?");
-    final private Pattern indexPattern = Pattern.compile(
-            "(?<unique>UNIQUE(?:\\s+)(?:\\n)?)?INDEX\\s+(?:\\n)?(?<name>\\S+)\\s+\\((?<columns>[^)]+|\\n+)\\)(?:,)?(?:\\s+--\\s+(?<comment>.+))?");
-    final private Pattern foreignPattern = Pattern.compile(
-            "FOREIGN KEY\\s+\\((?<name>\\S+)\\)(?:\\s+--\\s+(?<comment>.+))?(?:\\s+|\\n)REFERENCES\\s+(?<table>[^(]+)\\((?<column>[^)]+)\\)(?:\\s|\\n)(?<ons>[^,]+)",
-            Pattern.CASE_INSENSITIVE);
+    final private Pattern fieldPattern = Pattern.compile("(?<name>\\S+)(?:\\s)(?<type>(?:\\sUNSIGNED|\\sPRECISION|\\S)+)\\s(?<modifiers>(?:[^,\\-\\n]+))?(?:,)?(?:\\s+)?(?:--\\s+(?<comment>.+))?");
+    final private Pattern indexPattern = Pattern.compile("(?<unique>UNIQUE(?:\\s+)(?:\\n)?)?INDEX\\s+(?:\\n)?(?<name>\\S+)\\s+\\((?<columns>[^)]+|\\n+)\\)(?:,)?(?:\\s+--\\s+(?<comment>.+))?");
+    final private Pattern foreignPattern = Pattern.compile("FOREIGN KEY\\s+\\((?<name>\\S+)\\)(?:\\s+--\\s+(?<comment>.+))?(?:\\s+|\\n)REFERENCES\\s+(?<table>[^(]+)\\((?<column>[^)]+)\\)(?:\\s|\\n)(?<ons>[^,]+)", Pattern.CASE_INSENSITIVE);
     final private int FIELD_TABLE_WIDTH = 157;
     final private int INDEX_TABLE_WIDTH = 119;
     final private int KEY_TABLE_WIDTH = 129;
@@ -29,29 +25,26 @@ public class SQLTable extends SQLEntity {
 
         while (fm.find()) {
             String fieldName = fm.group("name");
-            if (!fieldName.toUpperCase().equals("INDEX") && !fieldName.toUpperCase().equals("UNIQUE")
-                    && !fieldName.toUpperCase().equals("FOREIGN")) {
+            if (!fieldName.equalsIgnoreCase("INDEX") && !fieldName.equalsIgnoreCase("UNIQUE") && !fieldName.equalsIgnoreCase("FOREIGN")) {
                 fields.add(new SQLField(fm.group("name"), fm.group("type"), fm.group("comment"), fm.group("modifiers")));
             }
         }
 
         while (im.find()) {
-            indexes.add(
-                    new SQLIndex(im.group("name"), im.group("comment"), im.group("unique") != null, im.group("columns")));
+            indexes.add(new SQLIndex(im.group("name"), im.group("comment"), im.group("unique") != null, im.group("columns")));
         }
 
         while (km.find()) {
-            foreignKeys.add(new SQLForeignKey(km.group("name"), km.group("comment"), km.group("table"), km.group("column"),
-                    km.group("ons")));
+            foreignKeys.add(new SQLForeignKey(km.group("name"), km.group("comment"), km.group("table"), km.group("column"), km.group("ons")));
         }
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(String.format("TABLE %s%n", name));
-        sb.append(String.format("- %s%n", comment.replaceAll("\n", "")));
+        sb.append(String.format("- %s%n", getPlainComment()));
 
-        if (fields.size() == 0) {
+        if (fields.isEmpty()) {
             sb.append("No fields\n");
         } else {
             sb.append(tableLine(FIELD_TABLE_WIDTH));
@@ -73,7 +66,7 @@ public class SQLTable extends SQLEntity {
 
         sb.append("\n");
 
-        if (indexes.size() == 0) {
+        if (indexes.isEmpty()) {
             sb.append("No indexes\n");
         } else {
             sb.append(tableLine(INDEX_TABLE_WIDTH));
@@ -95,7 +88,7 @@ public class SQLTable extends SQLEntity {
 
         sb.append("\n");
 
-        if (foreignKeys.size() == 0) {
+        if (foreignKeys.isEmpty()) {
             sb.append("No foreign keys\n");
         } else {
             sb.append(tableLine(KEY_TABLE_WIDTH));
@@ -120,11 +113,11 @@ public class SQLTable extends SQLEntity {
 
     public String toMD() {
         StringBuilder sb = new StringBuilder(String.format("## `%s`%n", name));
-        sb.append("> " + getCommentMD() + "\n\n" + backToTop());
+        sb.append("> ").append(getCommentMD()).append("\n\n").append(backToTop());
 
         sb.append("### Fields\n");
 
-        if (fields.size() == 0) {
+        if (fields.isEmpty()) {
             sb.append("This table has no fields.\n");
         } else {
             sb.append(mdTableHeader("Name", "Type", "Unique", "NULL", "Default", "On Update", "Comment"));
@@ -138,7 +131,7 @@ public class SQLTable extends SQLEntity {
 
         sb.append("### Indexes\n");
 
-        if (indexes.size() == 0) {
+        if (indexes.isEmpty()) {
             sb.append("This table has no explicit indexes.\n");
         } else {
             sb.append(mdTableHeader("Name", "Unique", "Columns", "Comment"));
@@ -152,7 +145,7 @@ public class SQLTable extends SQLEntity {
 
         sb.append("### Relationships\n");
 
-        if (foreignKeys.size() == 0) {
+        if (foreignKeys.isEmpty()) {
             sb.append("This table has no relationships");
         } else {
             sb.append(mdTableHeader("Name", "References", "On Delete", "On Update", "Comment"));

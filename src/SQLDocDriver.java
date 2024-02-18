@@ -7,6 +7,8 @@ public class SQLDocDriver {
     private static char selectedOutput;
     private static String fileName;
     private static String title;
+    private final static int SETTING_DESC_LENGTH = 65;
+    private final static String SETTING_TEMPLATE = " %s%-35.35s\033[0m %-" + SETTING_DESC_LENGTH + "s %n";
 
     public static void main(String[] args) {
         try {
@@ -129,7 +131,7 @@ public class SQLDocDriver {
                 "Run the program in the specified directory or on the specified file. Will output to \"sqldoc.md\" in that directory.");
         printCmd("sqldoc settings", "Print a list of all settings and their current value.");
         printCmd("sqldoc set [setting]=[value]",
-                "Change the value of a setting. Replace spaces with \"+\" in the setting value");
+                "Change the value of a setting. In values with spaces, use \"+\" in place of a space. You can escape the \"+\" character using \"\\\" to include it in the title.");
         printCmd("sqldoc reset", "Reset all settings.", "\033[1;91m");
         System.out.println();
         System.out.println("\nFlags:\n");
@@ -139,15 +141,16 @@ public class SQLDocDriver {
         printCmd("-o(ut) [path]", "Sends the output to the specified file or directory.");
         printCmd("-t(itle) [title]", "Specifies a document title (for Markdown and HTML outputs)");
         printCmd("-h(elp)", "Print this menu");
+        System.out.println();
     }
 
     private static void printCmd(String cmd, String desc, String colorCode) {
-        if (desc.length() > 50) {
-            int lastPrintInd = desc.substring(0, 50).lastIndexOf(' ');
-            System.out.printf(" %s%-35.35s\033[0m %-50.50s %n", colorCode, cmd, desc.substring(0, lastPrintInd));
+        if (desc.length() > SETTING_DESC_LENGTH) {
+            int lastPrintInd = desc.substring(0, SETTING_DESC_LENGTH).lastIndexOf(' ');
+            System.out.printf(SETTING_TEMPLATE, colorCode, cmd, desc.substring(0, lastPrintInd));
             printCmd("", desc.substring(lastPrintInd + 1));
         } else {
-            System.out.printf(" %s%-35.35s\033[0m %-50.50s %n", colorCode, cmd, desc);
+            System.out.printf(SETTING_TEMPLATE, colorCode, cmd, desc);
             helpLine();
         }
     }
@@ -157,6 +160,6 @@ public class SQLDocDriver {
     }
 
     private static void helpLine() {
-        System.out.println(String.format(" %35s %50s ", "", "").replaceAll("\\s", "-"));
+        System.out.println(String.format(" %35s %" + SETTING_DESC_LENGTH + "s ", "", "").replaceAll("\\s", "-"));
     }
 }

@@ -10,11 +10,11 @@ public class SQLIndex extends SQLEntity {
 
     @Override
     public String toString() {
-        return String.format(INDEX_TEMPLATE, name, getUnique(), columns, comment);
+        return String.format(INDEX_TEMPLATE, name, getUnique(), columns, getPlainComment());
     }
 
     public String toMD() {
-        return mdTableRow(name, getUnique(), columns, comment);
+        return mdTableRow(name, getUnique(), columns, getCommentMD());
     }
 
     public String getUnique() {

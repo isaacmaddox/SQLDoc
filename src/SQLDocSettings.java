@@ -44,7 +44,7 @@ public class SQLDocSettings {
 
         while (settingMatcher.find()) {
             String key = settingMatcher.group("key");
-            String value = settingMatcher.group("value").replaceAll("\\+", " ");
+            String value = settingMatcher.group("value").replaceAll("(?<!\\\\)\\+", " ").replaceAll("\\\\\\+", "+");
             StringBuilder out = new StringBuilder();
 
             if (!settings.containsKey(key)) {

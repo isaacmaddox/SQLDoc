@@ -3,7 +3,7 @@ public class SQLEntity implements Comparable<SQLEntity> {
     public final String FIELD_TEMPLATE = "| %-20.20s | %-15.15s | %-6.6s | %-4.4s | %-20.20s | %-20.20s | %-50.50s |%n";
     public final String INDEX_TEMPLATE = "| %-20.20s | %-6.6s | %-30.30s | %-50.50s |%n";
     public final String FOREIGN_TEMPLATE = "| %-20.20s | %-25.25s | %-9.9s | %-9.9s | %-50.50s |%n";
-    public final String TRIGGER_TEMPLATE = "| %-20.20s | %-25.25s | %-15.15s | %-50.50s |";
+    public final String TRIGGER_TEMPLATE = "| %-20.20s | %-25.25s | %-15.15s | %-50.50s |%n";
     protected String name;
     protected String comment;
 
@@ -20,16 +20,8 @@ public class SQLEntity implements Comparable<SQLEntity> {
             comment = "";
     }
 
-    public static String mdTableHeaderS(String... cols) {
-        return new SQLEntity().mdTableHeader(cols);
-    }
-
-    public static String mdTableHRowS(String... cols) {
-        return new SQLEntity().mdTableRow(cols);
-    }
-
     protected String tableLine(int width) {
-        return String.format("%-" + width + "s%n", "").replaceAll("\\s", "-");
+        return String.format("%-" + width + "s%n", "").replaceAll(" ", "-");
     }
 
     protected String mdTableRow(String... cols) {
@@ -54,6 +46,10 @@ public class SQLEntity implements Comparable<SQLEntity> {
 
     public String getCommentMD() {
         return comment.replaceAll("@see\\s+(.+)", "\n[See `$1`](#$1)\n");
+    }
+
+    public String getPlainComment() {
+        return comment.replaceAll("@see\\s+\\S+", "");
     }
 
     public String getName() {

@@ -3,8 +3,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLProcedure extends SQLEntity {
-    final private Pattern argPattern = Pattern
-            .compile("(?:\\s+)?(?<name>\\S+)(?:\\s+)(?<type>(?:[^-,]+))(?:,)?(?:\\s+)?(?<comment>--(?:.+))?");
+    final private Pattern argPattern = Pattern.compile("(?:\\s+)?(?<name>\\S+)(?:\\s+)(?<type>(?:[^-,]+))(?:,)?(?:\\s+)?(?<comment>--(?:.+))?");
     final private int TABLE_WIDTH = 95;
     private ArrayList<SQLParam> params;
 
@@ -29,9 +28,9 @@ public class SQLProcedure extends SQLEntity {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(String.format("PROCEDURE %s%n", name));
-        sb.append("- " + comment.replaceAll("\n", "\n  ") + "\n");
+        sb.append("- ").append(getPlainComment()).append("\n");
 
-        if (params.size() == 0) {
+        if (params.isEmpty()) {
             sb.append("No parameters\n");
         } else {
             sb.append(tableLine(TABLE_WIDTH));
@@ -52,9 +51,9 @@ public class SQLProcedure extends SQLEntity {
 
     public String toMD() {
         StringBuilder sb = new StringBuilder(String.format("## `%s()`%n", name));
-        sb.append("> " + getCommentMD() + "\n\n" + backToTop());
+        sb.append("> ").append(getCommentMD()).append("\n\n").append(backToTop());
 
-        if (params.size() == 0) {
+        if (params.isEmpty()) {
             sb.append("No parameters");
         } else {
             sb.append("### Parameters\n");

@@ -4,28 +4,33 @@ import java.util.Collections;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class SQLParser {
     private final File path;
     private final ArrayList<SQLProcedure> procedures;
     private final ArrayList<SQLTable> tables;
+    private final ArrayList<SQLTrigger> triggers;
     private final String title;
     final private Pattern docPattern = Pattern.compile(
             "/\\*\\*(?:\\s+|\\n+)?(?<comment>(?:[^/]+)+)\\*/\\n?CREATE\\s+(?<type>\\S+)\\s+(?<name>[^\\s()]+)(?:\\s+)?\\(\\n?(?<args>(?:[^)].+\\n+)+)?\\)",
             Pattern.CASE_INSENSITIVE);
-    final private Pattern triggerPattern = Pattern.compile("/\\*\\*(?:\\s+|\\n+)?(?<comment>(?:[^/]+)+)\\*/\\n?CREATE\\s+(?<type>\\S+)\\s+(?<name>[^\\s()]+)(?:\\n|\\s)+(?<when>AFTER|BEFORE)(?:\\n|\\s)+(?<action>\\S+)(?:\\n|\\s)+ON(?:\\s|\\n)+(?<tblname>\\S+)");
+    final private Pattern triggerPattern = Pattern.compile("/\\*\\*(?:\\s+|\\n+)?(?<comment>(?:[^/]+)+)\\*/\\n?CREATE\\s+(?<type>TRIGGER)\\s+(?<name>[^\\s()]+)(?:\\n|\\s)+(?<when>(?:AFTER|BEFORE)(?:\\n|\\s)+\\S+)(?:\\n|\\s)+ON(?:\\s|\\n)+(?<table>\\S+)");
     private int fileCount;
     private int procCount;
     private int tableCount;
     private boolean quietMode;
+    private int triggerCount;
 
     public SQLParser(final File file, String newTitle) {
         path = file;
         procedures = new ArrayList<SQLProcedure>();
         tables = new ArrayList<SQLTable>();
+        triggers = new ArrayList<SQLTrigger>();
         fileCount = 0;
         procCount = 0;
         tableCount = 0;
+        triggerCount = 0;
         quietMode = false;
         title = newTitle;
     }
@@ -35,8 +40,9 @@ public class SQLParser {
 
         parse(path);
 
-        Collections.sort(procedures);
         Collections.sort(tables);
+        Collections.sort(procedures);
+        Collections.sort(triggers);
 
         if (!quietMode)
             System.out.println("Finished reading " + fileCount + " file" + (fileCount > 1 ? 's' : "") + '.');
@@ -51,6 +57,7 @@ public class SQLParser {
             ++fileCount;
             procCount = 0;
             tableCount = 0;
+            triggerCount = 0;
             processFile(file);
         }
     }
@@ -58,11 +65,21 @@ public class SQLParser {
     public void print() {
         System.out.println();
 
+        System.out.println("\033[1;4;96mTABLES\033[0m\n");
+
+        for (SQLTable t : tables) {
+            System.out.println(t.toString());
+        }
+
+        System.out.println("\033[1;4;96mPROCEDURES\033[0m\n");
+
         for (SQLProcedure p : procedures) {
             System.out.println(p.toString());
         }
 
-        for (SQLTable t : tables) {
+        System.out.println("\033[1;4;96mTRIGGERS\033[0m\n");
+
+        for (SQLTrigger t : triggers) {
             System.out.println(t.toString());
         }
     }
@@ -98,6 +115,14 @@ public class SQLParser {
                 }
             }
 
+            if (!triggers.isEmpty()) {
+                output.println("# Triggers");
+
+                for (SQLTrigger t : triggers) {
+                    output.println(t.toMD());
+                }
+            }
+
             output.println("\n---\n[Check out SQLDoc on Github](https://github.com/isaacmaddox/SQLDoc)");
 
             output.close();
@@ -110,10 +135,10 @@ public class SQLParser {
     }
 
     private String tableOfContentsMD() {
-        int max_size = Math.max(tables.size(), procedures.size());
+        int max_size = Math.max(tables.size(), Math.max(procedures.size(), triggers.size()));
         StringBuilder sb = new StringBuilder("# Table of Contents\n");
 
-        sb.append(SQLEntity.mdTableHeaderS("Tables", "Procedures"));
+        sb.append(new SQLEntity().mdTableHeader("Tables", "Procedures", "Triggers"));
 
         for (int i = 0; i < max_size; ++i) {
             sb.append("| ");
@@ -124,6 +149,11 @@ public class SQLParser {
 
             if (procedures.size() >= i + 1) {
                 sb.append(String.format("%s | ", procedures.get(i).getMDLink()));
+            } else
+                sb.append("| ");
+
+            if (triggers.size() >= i + 1) {
+                sb.append(String.format("%s | ", triggers.get(i).getMDLink()));
             } else
                 sb.append("| |");
 
@@ -154,35 +184,47 @@ public class SQLParser {
 
                 buffer += (!buffer.isEmpty() ? "\n" : "") + line;
 
-                Matcher m = docPattern.matcher(buffer);
-                boolean matches = m.find();
+                Matcher docMatcher = docPattern.matcher(buffer);
+                Matcher triggerMatcher = triggerPattern.matcher(buffer);
 
-                if (matches) {
-                    processDoc(m.group("name"), m.group("type"), m.group("comment"), m.group("args"));
+                if (docMatcher.find()) {
+                    processDoc(docMatcher.group("name"), docMatcher.group("type"), docMatcher.group("comment"), docMatcher.group("args"));
+                    buffer = "";
+                } else if (triggerMatcher.find()) {
+                    processDoc(triggerMatcher.group("name"), triggerMatcher.group("type"), triggerMatcher.group("comment"), triggerMatcher.group("when"), triggerMatcher.group("table"));
                     buffer = "";
                 }
             }
 
             inputFR.close();
-            if (procCount > 0 && !quietMode)
-                System.out.println("[" + file.getName() + "] Found " + procCount + " procedures");
-            if (tableCount > 0 && !quietMode) {
-                System.out.println("[" + file.getName() + "] Found " + tableCount + " tables");
-            }
+            if (quietMode) return;
+
+            if (tableCount > 0)
+                System.out.printf("[%s] Found %d tables%n", file.getName(), tableCount);
+            if (procCount > 0)
+                System.out.printf("[%s] Found %d procedures%n", file.getName(), procCount);
+            if (triggerCount > 0)
+                System.out.printf("[%s] Found %d triggers%n", file.getName(), triggerCount);
+
         } catch (FileNotFoundException e) {
             SQLDocDriver.printError("Couldn't find file");
         }
     }
 
-    private void processDoc(final String name, final String type, final String comment, final String args) {
+    private void processDoc(final String name, final String type, final String comment, final String... args) {
         switch (type.toUpperCase()) {
             case "PROCEDURE":
                 ++procCount;
-                procedures.add(new SQLProcedure(name, comment, args));
+                procedures.add(new SQLProcedure(name, comment, args[0]));
                 break;
             case "TABLE":
                 ++tableCount;
-                tables.add(new SQLTable(name, comment, args));
+                tables.add(new SQLTable(name, comment, args[0]));
+                break;
+            case "TRIGGER":
+                if (args.length < 2) return;
+                ++triggerCount;
+                triggers.add(new SQLTrigger(name, comment, args[0], args[1]));
                 break;
         }
     }
