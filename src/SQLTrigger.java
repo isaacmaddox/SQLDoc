@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class SQLTrigger extends SQLEntity {
     private final String action;
     private final String table;
@@ -25,15 +27,7 @@ public class SQLTrigger extends SQLEntity {
     }
 
     public String toMD() {
-        StringBuilder s = new StringBuilder();
-
-        s.append(String.format("## `%s`%n", name)).append("> ").append(getCommentMD()).append("\n\n").append(backToTop());
-
-        s.append(mdTableHeader("Run", "On table"));
-
-        s.append(mdTableRow(action, table));
-
-        return s.toString();
+        return mdTableRow(name, action, getCommentMD());
     }
 
     private String getTableLinkMD() {

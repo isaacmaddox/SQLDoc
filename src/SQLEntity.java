@@ -45,7 +45,7 @@ public class SQLEntity implements Comparable<SQLEntity> {
     }
 
     public String getCommentMD() {
-        return comment.replaceAll("@see\\s+(.+)", "\n[See `$1`](#$1)\n");
+        return comment.replaceAll("@see\\s+([^@]+)", "\n\n[See `$1`](#$1)\n");
     }
 
     public String getPlainComment() {

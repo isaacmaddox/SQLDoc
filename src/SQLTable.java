@@ -13,6 +13,7 @@ public class SQLTable extends SQLEntity {
     private ArrayList<SQLField> fields;
     private ArrayList<SQLIndex> indexes;
     private ArrayList<SQLForeignKey> foreignKeys;
+    private ArrayList<SQLTrigger> triggers;
 
     public SQLTable(String name, String comment, String fieldString) {
         super(name, comment);
@@ -22,6 +23,7 @@ public class SQLTable extends SQLEntity {
         fields = new ArrayList<SQLField>();
         indexes = new ArrayList<SQLIndex>();
         foreignKeys = new ArrayList<SQLForeignKey>();
+        triggers = new ArrayList<SQLTrigger>();
 
         while (fm.find()) {
             String fieldName = fm.group("name");
@@ -155,6 +157,24 @@ public class SQLTable extends SQLEntity {
             }
         }
 
+        sb.append("\n");
+
+        sb.append("### Triggers\n");
+
+        if (triggers.isEmpty()) {
+            sb.append("This table has no triggers");
+        } else {
+            sb.append(mdTableHeader("Name", "Run", "Comment"));
+
+            for (SQLTrigger t : triggers) {
+                sb.append(t.toMD());
+            }
+        }
+
         return sb.toString();
+    }
+
+    public void addTrigger(SQLTrigger t) {
+        triggers.add(t);
     }
 }

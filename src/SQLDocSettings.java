@@ -91,6 +91,7 @@ public class SQLDocSettings {
         settings.putIfAbsent("output", "md");
         settings.putIfAbsent("filename", "sqldoc");
         settings.putIfAbsent("title", "SQLDoc Generated Documentation");
+        settings.putIfAbsent("hide-credits", "false");
 
         if (overwrite) writeSettings();
     }
