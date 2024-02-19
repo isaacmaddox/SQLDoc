@@ -1,17 +1,20 @@
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLDocSettings {
-    private static final Map<String, String> settings = new LinkedHashMap<String, String>();
+    private final static Map<String, String> settings = new LinkedHashMap<String, String>();
     private final static Pattern settingPattern = Pattern.compile("(?<key>\\S+)=(?<value>\\S+)");
     private final static Pattern settingFilePattern = Pattern.compile("([^=]+)=(.+)");
     private final static String settingsTable = "| %-25.25s | %-40.40s |%n";
     private final static Map<String, String> validValues = new HashMap<>();
     private static File settings_file;
 
-    public static void init() throws FileNotFoundException {
+    public static void init() throws IOException {
         if (System.getenv("SQLDOC_HOME") != null) {
             settings_file = new File(String.format("%s\\.settings", System.getenv("SQLDOC_HOME")));
         }
@@ -42,7 +45,7 @@ public class SQLDocSettings {
         validValues.put("hide-procedures", "true false");
     }
 
-    public static void updateSettings(String cmd) {
+    public static void updateSettings(String cmd) throws IOException {
         Matcher settingMatcher = settingPattern.matcher(cmd);
 
         while (settingMatcher.find()) {
@@ -88,7 +91,7 @@ public class SQLDocSettings {
         System.out.println();
     }
 
-    private static void setDefaultSettings(boolean overwrite) {
+    private static void setDefaultSettings(boolean overwrite) throws IOException {
         if (overwrite) settings.clear();
 
         settings.put("output", "md");
@@ -101,7 +104,7 @@ public class SQLDocSettings {
         if (overwrite) writeSettings();
     }
 
-    public static void resetToDefault() {
+    public static void resetToDefault() throws IOException {
         Scanner in = new Scanner(System.in);
         System.out.print("\033[0;91mAre you sure you want to reset all settings? (y/n):\033[0m ");
 
@@ -120,22 +123,17 @@ public class SQLDocSettings {
         in.close();
     }
 
-    private static boolean writeSettings() {
-        try {
-            FileWriter fw = new FileWriter(settings_file);
-            BufferedWriter bw = new BufferedWriter(fw);
-            PrintWriter output = new PrintWriter(bw);
+    private static boolean writeSettings() throws IOException {
+        FileWriter fw = new FileWriter(settings_file);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter output = new PrintWriter(bw);
 
-            for (Map.Entry<String, String> e : settings.entrySet()) {
-                output.printf("%s=%s%n", e.getKey(), e.getValue());
-            }
-
-            output.close();
-
-            return true;
-        } catch (Exception e) {
-            System.out.println(e.getClass());
-            return false;
+        for (Map.Entry<String, String> e : settings.entrySet()) {
+            output.printf("%s=%s%n", e.getKey(), e.getValue());
         }
+
+        output.close();
+
+        return true;
     }
 }

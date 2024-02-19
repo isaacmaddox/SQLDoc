@@ -1,10 +1,12 @@
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLDocDriver {
     private final static String VERSION = "\033[1;93mSQLDoc\033[0;93m v0.0.1\033[0m";
-    private static StringBuilder cmd = new StringBuilder();
+    private final static StringBuilder cmd = new StringBuilder();
     private final static int SETTING_DESC_LENGTH = 65;
     private final static String SETTING_TEMPLATE = " %s%-35.35s\033[0m %-" + SETTING_DESC_LENGTH + "s %n";
 
@@ -38,9 +40,8 @@ public class SQLDocDriver {
             if (checkForFlag("v") || checkForFlag("version")) {
                 System.out.println(VERSION);
                 if (System.getenv("SQLDOC_HOME") == null) {
-                    printError("There is a problem with your installation. You are missing the %SQLDOC_HOME% environment variable.", false);
+                    throw new SQLDocException("There is a problem with your installation. You are missing the %SQLDOC_HOME% environment variable.");
                 }
-                return;
             }
 
             // Check for specified output type
@@ -51,8 +52,7 @@ public class SQLDocDriver {
             }
 
             if (selectedOutput != 'm' && selectedOutput != 'c') {
-                printError("Invalid output type. Valid types are md (markdown) and c (console)");
-                return;
+                throw new SQLDocException("Invalid output type. Valid types are md (markdown) and c (console)");
             }
 
             // Default file location is where the program is run from
@@ -86,14 +86,16 @@ public class SQLDocDriver {
 
             if (selectedOutput == 'm') {
                 p.printMD(fileName);
-            } else if (selectedOutput == 'c') {
-                p.print();
             } else {
-                printError(
-                        "SQLDoc could not find an output type specified. Use \033[1msqldoc set default_output=<value>\033[0;91m to set the default");
+                p.print();
             }
+        } catch (SQLDocException e) {
+            printError(e.getMessage());
+        } catch (FileNotFoundException e) {
+            printError("Couldn't find file.");
+        } catch (IOException e) {
+            printError("There was an error writing to the settings file.");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             printError("Malformed command or invalid file reference.");
         }
     }
