@@ -1,22 +1,22 @@
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLDocSettings {
-    private static final Map<String, String> settings = new HashMap<String, String>();
+    private static final Map<String, String> settings = new LinkedHashMap<String, String>();
     private final static Pattern settingPattern = Pattern.compile("(?<key>\\S+)=(?<value>\\S+)");
     private final static Pattern settingFilePattern = Pattern.compile("([^=]+)=(.+)");
     private final static String settingsTable = "| %-25.25s | %-40.40s |%n";
-    private final static String validOutputs = "md c";
+    private final static Map<String, String> validValues = new HashMap<>();
     private static File settings_file;
 
     public static void init() throws FileNotFoundException {
         if (System.getenv("SQLDOC_HOME") != null) {
             settings_file = new File(String.format("%s\\.settings", System.getenv("SQLDOC_HOME")));
         }
+
+        setDefaultSettings(false);
 
         // Settings file exists, so populate the settings Map
         if (settings_file != null && settings_file.exists()) {
@@ -29,14 +29,17 @@ public class SQLDocSettings {
                 settingMatcher = settingFilePattern.matcher(line);
 
                 if (settingMatcher.find()) {
-                    settings.put(settingMatcher.group(1), settingMatcher.group(2));
+                    settings.replace(settingMatcher.group(1), settingMatcher.group(2));
                 }
             }
 
             settingsInput.close();
         }
 
-        setDefaultSettings(false);
+        validValues.put("output", "c md");
+        validValues.put("hide-credits", "true false");
+        validValues.put("hide-tables", "true false");
+        validValues.put("hide-procedures", "true false");
     }
 
     public static void updateSettings(String cmd) {
@@ -49,7 +52,7 @@ public class SQLDocSettings {
 
             if (!settings.containsKey(key)) {
                 out.append(String.format("\033[91m%s is not a valid setting\033[0m%n", key));
-            } else if (key.equals("output") && !validOutputs.contains(value)) {
+            } else if (validValues.containsKey(key) && !validValues.get(key).contains(value)) {
                 SQLDocDriver.printError(String.format("%s is not a valid value for %s", value, key), false);
             } else {
                 settings.put(key, value);
@@ -88,10 +91,12 @@ public class SQLDocSettings {
     private static void setDefaultSettings(boolean overwrite) {
         if (overwrite) settings.clear();
 
-        settings.putIfAbsent("output", "md");
-        settings.putIfAbsent("filename", "sqldoc");
-        settings.putIfAbsent("title", "SQLDoc Generated Documentation");
-        settings.putIfAbsent("hide-credits", "false");
+        settings.put("output", "md");
+        settings.put("filename", "sqldoc");
+        settings.put("title", "SQLDoc Generated Documentation");
+        settings.put("hide-credits", "false");
+        settings.put("hide-tables", "false");
+        settings.put("hide-procedures", "false");
 
         if (overwrite) writeSettings();
     }
@@ -104,12 +109,11 @@ public class SQLDocSettings {
 
         while (choice != 'n' && choice != 'y') {
             System.out.print("\033[0;91mInvalid choice. Enter y or n:\033[0m ");
-            choice = in.next().charAt(0);
+            choice = Character.toLowerCase(in.next().charAt(0));
         }
 
         if (choice == 'y') {
             setDefaultSettings(true);
-            writeSettings();
             System.out.println("\n\033[1;91mSettings have been reset\033[0m\n");
         }
 

@@ -84,6 +84,8 @@ public class SQLParser {
 
         try {
             boolean hideCredits = SQLDocSettings.getSetting("hide-credits").equals("true");
+            boolean hideTables = SQLDocSettings.getSetting("hide-tables").equals("true");
+            boolean hideProcedures = SQLDocSettings.getSetting("hide-procedures").equals("true");
             if (!location.endsWith(".md"))
                 location += ".md";
             FileWriter fw = new FileWriter(location);
@@ -98,7 +100,7 @@ public class SQLParser {
 
             output.println(tableOfContentsMD());
 
-            if (!tables.isEmpty()) {
+            if (!tables.isEmpty() && !hideTables) {
                 output.println("# Tables");
 
                 for (SQLTable t : tables) {
@@ -106,7 +108,7 @@ public class SQLParser {
                 }
             }
 
-            if (!procedures.isEmpty()) {
+            if (!procedures.isEmpty() && !hideProcedures) {
                 output.println("# Procedures");
 
                 for (SQLProcedure p : procedures) {
