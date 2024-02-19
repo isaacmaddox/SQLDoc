@@ -142,7 +142,7 @@ public class SQLDocDriver {
         System.out.println();
         System.out.println("\nFlags:\n");
         helpLine();
-        printCmd("-md", "Specifies output to a markdown file. This is the default, so flag is redundant");
+        printCmd("-md", "Specifies output to a markdown file.");
         printCmd("-q(uiet)", "Runs the program without any logging in the console.");
         printCmd("-o(ut) [path]", "Sends the output to the specified file or directory.");
         printCmd("-t(itle) [title]", "Specifies a document title (for Markdown and HTML outputs)");
