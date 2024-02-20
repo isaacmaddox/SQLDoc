@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,8 +23,8 @@ public class SQLParser {
 
     public SQLParser(final File file, String newTitle) {
         path = file;
-        procedures = new ArrayList<SQLProcedure>();
-        tables = new ArrayList<SQLTable>();
+        procedures = new ArrayList<>();
+        tables = new ArrayList<>();
         fileCount = 0;
         procedureCount = 0;
         tableCount = 0;
@@ -44,9 +45,9 @@ public class SQLParser {
             System.out.println("Finished reading " + fileCount + " file" + (fileCount > 1 ? 's' : "") + '.');
     }
 
-    public void parse(final File file) throws FileNotFoundException {
+    public void parse(final File file) throws FileNotFoundException, NullPointerException {
         if (file.isDirectory()) {
-            for (File f : file.listFiles()) {
+            for (File f : Objects.requireNonNull(file.listFiles(), "No files in directory")) {
                 parse(f);
             }
         } else {

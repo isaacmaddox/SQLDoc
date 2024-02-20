@@ -2,8 +2,8 @@ public class SQLParam extends SQLEntity {
     private String type;
 
     public SQLParam(String newName, String newComment, String newType) {
-        super(newName, (newComment == null ? "" : newComment.replaceAll("(?:\s+)?--(?:\s)+", "").replaceAll("\n", " ")));
-        type = newType.replaceAll("(\s+)?\n(\s+)?", " ");
+        super(newName, (newComment == null ? "" : newComment.replaceAll("(?: +)?--(?: )+", "").replaceAll("\n", " ")));
+        type = newType.replaceAll("( +)?\n( +)?", " ");
     }
 
     @Override

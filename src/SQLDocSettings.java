@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLDocSettings {
-    private final static Map<String, String> settings = new LinkedHashMap<String, String>();
+    private final static Map<String, String> settings = new LinkedHashMap<>();
     private final static Pattern settingPattern = Pattern.compile("(?<key>\\S+)=(?<value>\\S+)");
     private final static Pattern settingFilePattern = Pattern.compile("([^=]+)=(.+)");
     private final static String settingsTable = "| %-25.25s | %-40.40s |%n";
@@ -92,8 +92,6 @@ public class SQLDocSettings {
     }
 
     private static void setDefaultSettings(boolean overwrite) throws IOException {
-        if (overwrite) settings.clear();
-
         settings.put("output", "md");
         settings.put("filename", "sqldoc");
         settings.put("title", "SQLDoc Generated Documentation");

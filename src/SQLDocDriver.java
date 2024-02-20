@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLDocDriver {
-    private final static String VERSION = "\033[1;93mSQLDoc\033[0;93m v0.0.1\033[0m";
+    private final static String VERSION = "\033[1;93mSQLDoc\033[0;93m v0.1.0\033[0m";
     private final static StringBuilder cmd = new StringBuilder();
     private final static int SETTING_DESC_LENGTH = 65;
     private final static String SETTING_TEMPLATE = " %s%-35.35s\033[0m %-" + SETTING_DESC_LENGTH + "s %n";
@@ -42,6 +42,7 @@ public class SQLDocDriver {
                 if (System.getenv("SQLDOC_HOME") == null) {
                     throw new SQLDocException("There is a problem with your installation. You are missing the %SQLDOC_HOME% environment variable.");
                 }
+                return;
             }
 
             // Check for specified output type
@@ -89,7 +90,7 @@ public class SQLDocDriver {
             } else {
                 p.print();
             }
-        } catch (SQLDocException e) {
+        } catch (SQLDocException | NullPointerException e) {
             printError(e.getMessage());
         } catch (FileNotFoundException e) {
             printError("Couldn't find file.");

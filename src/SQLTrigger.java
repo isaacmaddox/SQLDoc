@@ -1,9 +1,6 @@
-import java.util.ArrayList;
-
 public class SQLTrigger extends SQLEntity {
     private final String action;
     private final String table;
-    private final int TABLE_WIDTH = 123;
 
     public SQLTrigger(String name, String comment, String newAction, String newTable) {
         super(name, comment);
@@ -17,6 +14,7 @@ public class SQLTrigger extends SQLEntity {
 
         s.append(String.format("TRIGGER %s%n", name));
         s.append(String.format("- %s%n", getPlainComment()));
+        int TABLE_WIDTH = 123;
         s.append(tableLine(TABLE_WIDTH));
         s.append(String.format(TRIGGER_TEMPLATE, "Name", "Run", "On Table", "Comment"));
         s.append(tableLine(TABLE_WIDTH));
@@ -28,9 +26,5 @@ public class SQLTrigger extends SQLEntity {
 
     public String toMD() {
         return mdTableRow(name, action, getCommentMD());
-    }
-
-    private String getTableLinkMD() {
-        return String.format("[%s](#%s)", table, table);
     }
 }

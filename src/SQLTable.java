@@ -3,27 +3,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLTable extends SQLEntity {
-    final private String removePattern = "(?i)(UNIQUE INDEX.+|FOREIGN[^,]+,|INDEX.+)";
-    final private Pattern fieldPattern = Pattern.compile("(?<name>\\S+)(?:\\s)(?<type>(?:\\sUNSIGNED|\\sPRECISION|\\S)+)\\s(?<modifiers>(?:[^,\\-\\n]+))?(?:,)?(?:\\s+)?(?:--\\s+(?<comment>.+))?");
-    final private Pattern indexPattern = Pattern.compile("(?<unique>UNIQUE(?:\\s+)(?:\\n)?)?INDEX\\s+(?:\\n)?(?<name>\\S+)\\s+\\((?<columns>[^)]+|\\n+)\\)(?:,)?(?:\\s+--\\s+(?<comment>.+))?");
-    final private Pattern foreignPattern = Pattern.compile("FOREIGN KEY\\s+\\((?<name>\\S+)\\)(?:\\s+--\\s+(?<comment>.+))?(?:\\s+|\\n)REFERENCES\\s+(?<table>[^(]+)\\((?<column>[^)]+)\\)(?:\\s|\\n)(?<ons>[^,]+)", Pattern.CASE_INSENSITIVE);
-    final private int FIELD_TABLE_WIDTH = 157;
-    final private int INDEX_TABLE_WIDTH = 119;
-    final private int KEY_TABLE_WIDTH = 129;
-    private ArrayList<SQLField> fields;
-    private ArrayList<SQLIndex> indexes;
-    private ArrayList<SQLForeignKey> foreignKeys;
-    private ArrayList<SQLTrigger> triggers;
+    private final ArrayList<SQLField> fields;
+    private final ArrayList<SQLIndex> indexes;
+    private final ArrayList<SQLForeignKey> foreignKeys;
+    private final ArrayList<SQLTrigger> triggers;
 
     public SQLTable(String name, String comment, String fieldString) {
         super(name, comment);
+        String removePattern = "(?i)(UNIQUE INDEX.+|FOREIGN[^,]+,|INDEX.+)";
+        Pattern fieldPattern = Pattern.compile("(?<name>\\S+)\\s(?<type>(?:\\sUNSIGNED|\\sPRECISION|\\S)+)\\s(?<modifiers>[^,\\-\\n]+)?,?(?:\\s+)?(?:--\\s+(?<comment>.+))?");
         Matcher fm = fieldPattern.matcher(fieldString.replaceAll(removePattern, ""));
+        Pattern indexPattern = Pattern.compile("(?<unique>UNIQUE\\s+\\n?)?INDEX\\s+\\n?(?<name>\\S+)\\s+\\((?<columns>[^)]+|\\n+)\\),?(?:\\s+--\\s+(?<comment>.+))?");
         Matcher im = indexPattern.matcher(fieldString);
+        Pattern foreignPattern = Pattern.compile("FOREIGN KEY\\s+\\((?<name>\\S+)\\)(?:\\s+--\\s+(?<comment>.+))?(?:\\s+|\\n)REFERENCES\\s+(?<table>[^(]+)\\((?<column>[^)]+)\\)(?:\\s|\\n)(?<ons>[^,]+)", Pattern.CASE_INSENSITIVE);
         Matcher km = foreignPattern.matcher(fieldString);
-        fields = new ArrayList<SQLField>();
-        indexes = new ArrayList<SQLIndex>();
-        foreignKeys = new ArrayList<SQLForeignKey>();
-        triggers = new ArrayList<SQLTrigger>();
+        fields = new ArrayList<>();
+        indexes = new ArrayList<>();
+        foreignKeys = new ArrayList<>();
+        triggers = new ArrayList<>();
 
         while (fm.find()) {
             String fieldName = fm.group("name");
@@ -49,6 +46,7 @@ public class SQLTable extends SQLEntity {
         if (fields.isEmpty()) {
             sb.append("No fields\n");
         } else {
+            int FIELD_TABLE_WIDTH = 157;
             sb.append(tableLine(FIELD_TABLE_WIDTH));
 
             sb.append(String.format("| \033[3m%-" + (FIELD_TABLE_WIDTH - 4) + "s\033[0m |%n", "COLUMNS"));
@@ -71,6 +69,7 @@ public class SQLTable extends SQLEntity {
         if (indexes.isEmpty()) {
             sb.append("No indexes\n");
         } else {
+            int INDEX_TABLE_WIDTH = 119;
             sb.append(tableLine(INDEX_TABLE_WIDTH));
 
             sb.append(String.format("| \033[3m%-" + (INDEX_TABLE_WIDTH - 4) + "s\033[0m |%n", "INDEXES"));
@@ -93,6 +92,7 @@ public class SQLTable extends SQLEntity {
         if (foreignKeys.isEmpty()) {
             sb.append("No foreign keys\n");
         } else {
+            int KEY_TABLE_WIDTH = 129;
             sb.append(tableLine(KEY_TABLE_WIDTH));
 
             sb.append(String.format("| \033[3m%-" + (KEY_TABLE_WIDTH - 4) + "s\033[0m |%n", "FOREIGN KEYS"));

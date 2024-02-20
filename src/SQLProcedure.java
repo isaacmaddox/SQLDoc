@@ -3,20 +3,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLProcedure extends SQLEntity {
-    final private Pattern argPattern = Pattern.compile("(?:\\s+)?(?<name>\\S+)(?:\\s+)(?<type>(?:[^-,]+))(?:,)?(?:\\s+)?(?<comment>--(?:.+))?");
-    final private int TABLE_WIDTH = 95;
-    private ArrayList<SQLParam> params;
-
-    public SQLProcedure(String name, String comment) {
-        super(name, comment);
-        params = new ArrayList<SQLParam>();
-    }
+    private final ArrayList<SQLParam> params;
 
     public SQLProcedure(String name, String comment, String args) {
         super(name, comment);
-        params = new ArrayList<SQLParam>();
+        params = new ArrayList<>();
 
         if (args != null) {
+            Pattern argPattern = Pattern.compile("(?:\\s+)?(?<name>\\S+)\\s+(?<type>[^-,]+),?(?:\\s+)?(?<comment>--.+)?");
             Matcher argMatcher = argPattern.matcher(args);
 
             while (argMatcher.find()) {
@@ -33,6 +27,7 @@ public class SQLProcedure extends SQLEntity {
         if (params.isEmpty()) {
             sb.append("No parameters\n");
         } else {
+            int TABLE_WIDTH = 95;
             sb.append(tableLine(TABLE_WIDTH));
 
             sb.append(String.format(PARAM_TEMPLATE, "Name", "Type", "Comment"));

@@ -2,21 +2,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLField extends SQLEntity {
-    final private Pattern defaultValuePattern = Pattern
-            .compile("DEFAULT\\s(?<default>(?:\".+\")|(?:[^\\s,]+))(?:,)?(?:\\n)?", Pattern.CASE_INSENSITIVE);
-    final private Pattern updateValuePattern = Pattern.compile("ON UPDATE(?:\\s|\\n)+(?<action>\\\"(?:[^\"]+)\\\"|\\S+)",
-            Pattern.CASE_INSENSITIVE);
-    private boolean key;
-    private boolean unique;
-    private boolean nullable;
-    private String type;
-    private String defaultValue;
-    private String onUpdate;
+    private final boolean key;
+    private final boolean unique;
+    private final boolean nullable;
+    private final String type;
+    private final String defaultValue;
+    private final String onUpdate;
 
     public SQLField(String name, String newType, String newComment, String modifiers) {
-        super(name, (newComment == null ? "" : newComment.replaceAll("(?:\s+)?--(?:\s)+", "").replaceAll("\n", " ")));
+        super(name, (newComment == null ? "" : newComment.replaceAll("(?: +)?-- +", "").replaceAll("\n", " ")));
         type = newType;
+        Pattern defaultValuePattern = Pattern
+                .compile("DEFAULT (?<default>\".+\"|[^ ,]+),?\\n?", Pattern.CASE_INSENSITIVE);
         Matcher dm = defaultValuePattern.matcher(modifiers);
+        Pattern updateValuePattern = Pattern.compile("ON UPDATE(?: |\\n)+(?<action>\"[^\"]+\"| +)",
+                Pattern.CASE_INSENSITIVE);
         Matcher up = updateValuePattern.matcher(modifiers);
 
         if (dm.find()) {
@@ -56,7 +56,7 @@ public class SQLField extends SQLEntity {
     }
 
     private String getDefault() {
-        return defaultValue == null ? "NULL" : defaultValue.replaceAll("'|\"", "");
+        return defaultValue == null ? "NULL" : defaultValue.replaceAll("['\"]", "");
     }
 
     private String getOnUpdate() {

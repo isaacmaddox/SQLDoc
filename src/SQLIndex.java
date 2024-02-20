@@ -1,11 +1,11 @@
 public class SQLIndex extends SQLEntity {
-    private boolean unique;
-    private String columns;
+    private final boolean unique;
+    private final String columns;
 
     public SQLIndex(String name, String comment, boolean uni, String cols) {
         super(name, comment);
         unique = uni;
-        columns = cols.replaceAll("([^,\s]+)", "`$1`");
+        columns = cols.replaceAll("([^,\\s]+)", "`$1`");
     }
 
     @Override
