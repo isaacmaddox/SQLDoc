@@ -7,11 +7,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLDocSettings {
-    private final static Map<String, String> settings = new LinkedHashMap<>();
-    private final static Pattern settingPattern = Pattern.compile("(?<key>\\S+)=(?<value>\\S+)");
-    private final static Pattern settingFilePattern = Pattern.compile("([^=]+)=(.+)");
-    private final static String settingsTable = "| %-25.25s | %-40.40s |%n";
-    private final static Map<String, String> validValues = new HashMap<>();
+    private static final Map<String, String> settings = new LinkedHashMap<>();
+    private static final Pattern settingPattern = Pattern.compile("(?<key>\\S+)=(?<value>\\S+)");
+    private static final Pattern settingFilePattern = Pattern.compile("([^=]+)=(.+)");
+    private static final String settingsTable = "| %-25.25s | %-40.40s |%n";
+    private static final Map<String, String> validValues = new HashMap<>();
     private static File settings_file;
 
     public static void init() throws IOException {

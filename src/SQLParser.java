@@ -11,10 +11,10 @@ public class SQLParser {
     private final ArrayList<SQLProcedure> procedures;
     private final ArrayList<SQLTable> tables;
     private final String title;
-    final private Pattern docPattern = Pattern.compile(
+    private final Pattern docPattern = Pattern.compile(
             "/\\*\\*(?:\\s+|\\n+)?(?<comment>(?:[^/]+)+)\\*/\\n?CREATE\\s+(?<type>\\S+)\\s+(?<name>[^\\s()]+)(?:\\s+)?\\(\\n?(?<args>(?:[^)].+\\n+)+)?\\)",
             Pattern.CASE_INSENSITIVE);
-    final private Pattern triggerPattern = Pattern.compile("/\\*\\*(?:\\s+|\\n+)?(?<comment>(?:[^/]+)+)\\*/\\n?CREATE\\s+(?<type>TRIGGER)\\s+(?<name>[^\\s()]+)(?:\\n|\\s)+(?<when>(?:AFTER|BEFORE)(?:\\n|\\s)+\\S+)(?:\\n|\\s)+ON(?:\\s|\\n)+(?<table>\\S+)");
+    private final Pattern triggerPattern = Pattern.compile("/\\*\\*(?:\\s+|\\n+)?(?<comment>(?:[^/]+)+)\\*/\\n?CREATE\\s+(?<type>TRIGGER)\\s+(?<name>[^\\s()]+)(?:\\n|\\s)+(?<when>(?:AFTER|BEFORE)(?:\\n|\\s)+\\S+)(?:\\n|\\s)+ON(?:\\s|\\n)+(?<table>\\S+)");
     private int fileCount;
     private int procedureCount;
     private int tableCount;

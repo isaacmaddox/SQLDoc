@@ -5,10 +5,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SQLDocDriver {
-    private final static String VERSION = "\033[1;93mSQLDoc\033[0;93m v0.1.0\033[0m";
-    private final static StringBuilder cmd = new StringBuilder();
-    private final static int SETTING_DESC_LENGTH = 65;
-    private final static String SETTING_TEMPLATE = " %s%-35.35s\033[0m %-" + SETTING_DESC_LENGTH + "s %n";
+    private static final String VERSION = "\033[1;93mSQLDoc\033[0;93m v0.1.0\033[0m";
+    private static final StringBuilder cmd = new StringBuilder();
+    private static final int SETTING_DESC_LENGTH = 65;
+    private static final String SETTING_TEMPLATE = " %s%-35.35s\033[0m %-" + SETTING_DESC_LENGTH + "s %n";
 
     public static void main(String[] args) {
         try {
