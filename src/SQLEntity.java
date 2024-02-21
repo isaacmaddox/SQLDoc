@@ -4,8 +4,8 @@ public class SQLEntity implements Comparable<SQLEntity> {
     public final String INDEX_TEMPLATE = "| %-20.20s | %-6.6s | %-30.30s | %-50.50s |%n";
     public final String FOREIGN_TEMPLATE = "| %-20.20s | %-25.25s | %-9.9s | %-9.9s | %-50.50s |%n";
     public final String TRIGGER_TEMPLATE = "| %-20.20s | %-25.25s | %-15.15s | %-50.50s |%n";
-    protected String name;
-    protected String comment;
+    private String name;
+    private final String comment;
 
     public SQLEntity() {
         this("", "");

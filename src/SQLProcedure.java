@@ -21,7 +21,7 @@ public class SQLProcedure extends SQLEntity {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(String.format("PROCEDURE %s%n", name));
+        StringBuilder sb = new StringBuilder(String.format("PROCEDURE %s%n", getName()));
         sb.append("- ").append(getPlainComment()).append("\n");
 
         if (params.isEmpty()) {
@@ -45,7 +45,7 @@ public class SQLProcedure extends SQLEntity {
     }
 
     public String toMD() {
-        StringBuilder sb = new StringBuilder(String.format("## `%s()`%n", name));
+        StringBuilder sb = new StringBuilder(String.format("## `%s()`%n", getName()));
         sb.append("> ").append(getCommentMD()).append("\n\n").append(backToTop());
 
         if (params.isEmpty()) {
@@ -65,6 +65,6 @@ public class SQLProcedure extends SQLEntity {
 
     @Override
     public String getMDLink() {
-        return "[" + name + "()](" + getLinkHref() + ")";
+        return "[" + getName() + "()](" + getLinkHref() + ")";
     }
 }

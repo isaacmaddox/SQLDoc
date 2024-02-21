@@ -14,7 +14,7 @@ public class SQLDocSettings {
     private static final Map<String, String> validValues = new HashMap<>();
     private static File settings_file;
 
-    public static void init() throws IOException {
+    public static void init() throws IOException, SQLDocException {
         if (System.getenv("SQLDOC_HOME") != null) {
             settings_file = new File(String.format("%s\\.settings", System.getenv("SQLDOC_HOME")));
         }
@@ -37,6 +37,8 @@ public class SQLDocSettings {
             }
 
             settingsInput.close();
+        } else {
+            throw new SQLDocException("No settings file found.");
         }
 
         validValues.put("output", "c md");
@@ -45,7 +47,7 @@ public class SQLDocSettings {
         validValues.put("hide-procedures", "true false");
     }
 
-    public static void updateSettings(String cmd) throws IOException {
+    public static void updateSettings(String cmd) throws IOException, SQLDocException {
         Matcher settingMatcher = settingPattern.matcher(cmd);
 
         while (settingMatcher.find()) {
@@ -54,9 +56,9 @@ public class SQLDocSettings {
             StringBuilder out = new StringBuilder();
 
             if (!settings.containsKey(key)) {
-                out.append(String.format("\033[91m%s is not a valid setting\033[0m%n", key));
+                throw new SQLDocException(String.format("\033[91m%s is not a valid setting\033[0m%n", key));
             } else if (validValues.containsKey(key) && !validValues.get(key).contains(value)) {
-                SQLDocDriver.printError(String.format("%s is not a valid value for %s", value, key), false);
+                throw new SQLDocException(String.format("%s is not a valid value for %s", value, key));
             } else {
                 settings.put(key, value);
                 out.append(String.format("Set \033[3;93m%s\033[0m to %s%n", key, value));
@@ -65,7 +67,7 @@ public class SQLDocSettings {
             if (writeSettings()) {
                 System.out.print(out);
             } else {
-                SQLDocDriver.printError("An error occurred while updating the settings.", true);
+                throw new SQLDocException("An error occurred while updating the settings.");
             }
         }
     }

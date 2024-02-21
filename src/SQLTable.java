@@ -40,7 +40,7 @@ public class SQLTable extends SQLEntity {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(String.format("TABLE %s%n", name));
+        StringBuilder sb = new StringBuilder(String.format("TABLE %s%n", getName()));
         sb.append(String.format("- %s%n", getPlainComment()));
 
         if (fields.isEmpty()) {
@@ -114,7 +114,7 @@ public class SQLTable extends SQLEntity {
     }
 
     public String toMD() {
-        StringBuilder sb = new StringBuilder(String.format("## `%s`%n", name));
+        StringBuilder sb = new StringBuilder(String.format("## `%s`%n", getName()));
         sb.append("> ").append(getCommentMD()).append("\n\n").append(backToTop());
 
         sb.append("### Fields\n");

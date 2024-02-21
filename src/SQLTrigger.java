@@ -12,19 +12,19 @@ public class SQLTrigger extends SQLEntity {
     public String toString() {
         StringBuilder s = new StringBuilder();
 
-        s.append(String.format("TRIGGER %s%n", name));
+        s.append(String.format("TRIGGER %s%n", getName()));
         s.append(String.format("- %s%n", getPlainComment()));
         int TABLE_WIDTH = 123;
         s.append(tableLine(TABLE_WIDTH));
         s.append(String.format(TRIGGER_TEMPLATE, "Name", "Run", "On Table", "Comment"));
         s.append(tableLine(TABLE_WIDTH));
-        s.append(String.format(TRIGGER_TEMPLATE, name, action, table, getPlainComment()));
+        s.append(String.format(TRIGGER_TEMPLATE, getName(), action, table, getPlainComment()));
         s.append(tableLine(TABLE_WIDTH));
 
         return s.toString();
     }
 
     public String toMD() {
-        return mdTableRow(name, action, getCommentMD());
+        return mdTableRow(getName(), action, getCommentMD());
     }
 }

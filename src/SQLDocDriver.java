@@ -101,6 +101,7 @@ public class SQLDocDriver {
         }
     }
 
+
     private static String getFlag(String flagName, boolean allowSpaces, String defaultValue) {
         final Pattern flagPattern = Pattern.compile(
                 allowSpaces ? String.format("-%s\\s([^-]+)", flagName) : String.format("-%s\\s(\\S+)", flagName),
@@ -120,14 +121,8 @@ public class SQLDocDriver {
         return cmd.indexOf("-" + flag) > -1;
     }
 
-    public static void printError(String msg, boolean showHelp) {
-        System.out.printf("%n\u001B[91m%s\u001B[0m%n%n", msg);
-        if (showHelp)
-            printHelp();
-    }
-
     public static void printError(String msg) {
-        printError(msg, true);
+        System.out.printf("%n\u001B[91m%s\u001B[0m%n%n", msg);
     }
 
     private static void printHelp() {

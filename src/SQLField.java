@@ -40,11 +40,11 @@ public class SQLField extends SQLEntity {
 
     @Override
     public String toString() {
-        return String.format(FIELD_TEMPLATE, name, type, getKey(), getNullable(), getDefault(), getOnUpdate(), getPlainComment());
+        return String.format(FIELD_TEMPLATE, getName(), type, getKey(), getNullable(), getDefault(), getOnUpdate(), getPlainComment());
     }
 
     public String toMD() {
-        return mdTableRow(name, type, getKey(), getNullable(), getDefault(), getOnUpdate(), getCommentMD());
+        return mdTableRow(getName(), type, getKey(), getNullable(), getDefault(), getOnUpdate(), getCommentMD());
     }
 
     private String getKey() {
