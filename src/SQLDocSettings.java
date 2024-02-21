@@ -38,7 +38,7 @@ public class SQLDocSettings {
 
             settingsInput.close();
         } else {
-            throw new SQLDocException("No settings file found.");
+            throw new SQLDocException("You are missing the %SQLDOC_HOME% environment variable. Refer to the documentation to fix this problem.");
         }
 
         validValues.put("output", "c md");
