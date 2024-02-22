@@ -46,7 +46,7 @@ public class SQLTable extends SQLEntity {
         if (fields.isEmpty()) {
             sb.append("No fields\n");
         } else {
-            int FIELD_TABLE_WIDTH = 157;
+            int FIELD_TABLE_WIDTH = 153;
             sb.append(tableLine(FIELD_TABLE_WIDTH));
 
             sb.append(String.format("| \033[3m%-" + (FIELD_TABLE_WIDTH - 4) + "s\033[0m |%n", "COLUMNS"));
@@ -109,6 +109,31 @@ public class SQLTable extends SQLEntity {
 
             sb.append(tableLine(KEY_TABLE_WIDTH));
         }
+
+        sb.append("\n");
+
+        if (triggers.isEmpty()) {
+            sb.append("No triggers");
+        } else {
+            int TRIGGER_TABLE_WIDTH = 105;
+            sb.append(tableLine(TRIGGER_TABLE_WIDTH));
+
+            sb.append(String.format("| \033[3m%-" + (TRIGGER_TABLE_WIDTH - 4) + "s\033[0m |%n", "TRIGGERS"));
+
+            sb.append(tableLine(TRIGGER_TABLE_WIDTH));
+
+            sb.append(String.format(TRIGGER_TEMPLATE, "Name", "Run", "Comment"));
+
+            sb.append(tableLine(TRIGGER_TABLE_WIDTH));
+
+            for (SQLTrigger t : triggers) {
+                sb.append(t.toString());
+            }
+
+            sb.append(tableLine(TRIGGER_TABLE_WIDTH));
+        }
+
+        sb.append("\n");
 
         return sb.toString();
     }

@@ -37,6 +37,7 @@ public class SQLDocDriver {
                 return;
             }
 
+            // Print the version of the program and exit
             if (checkForFlag("v") || checkForFlag("version")) {
                 System.out.println(VERSION);
                 if (System.getenv("SQLDOC_HOME") == null) {
@@ -100,7 +101,6 @@ public class SQLDocDriver {
             printError("Malformed command or invalid file reference.");
         }
     }
-
 
     private static String getFlag(String flagName, boolean allowSpaces, String defaultValue) {
         final Pattern flagPattern = Pattern.compile(

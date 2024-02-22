@@ -1,9 +1,9 @@
 public class SQLEntity implements Comparable<SQLEntity> {
     public final String PARAM_TEMPLATE = "| %-20.20s | %-15.15s | %-50.50s |%n";
-    public final String FIELD_TEMPLATE = "| %-20.20s | %-15.15s | %-6.6s | %-4.4s | %-20.20s | %-20.20s | %-50.50s |%n";
+    public final String FIELD_TEMPLATE = "| %-20.20s | %-15.15s | %-6.6s | %-4.4s | %-18.18s | %-18.18s | %-50.50s |%n";
     public final String INDEX_TEMPLATE = "| %-20.20s | %-6.6s | %-30.30s | %-50.50s |%n";
     public final String FOREIGN_TEMPLATE = "| %-20.20s | %-25.25s | %-9.9s | %-9.9s | %-50.50s |%n";
-    public final String TRIGGER_TEMPLATE = "| %-20.20s | %-25.25s | %-15.15s | %-50.50s |%n";
+    public final String TRIGGER_TEMPLATE = "| %-20.20s | %-25.25s | %-50.50s |%n";
     private String name;
     private final String comment;
 
