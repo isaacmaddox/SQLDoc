@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class SQLDocDriver {
     private static final String VERSION = "\033[1;93mSQLDoc\033[0;93m v0.1.0\033[0m";
-    private static final StringBuilder cmd = new StringBuilder();
+    private static String cmd = "";
     private static final int SETTING_DESC_LENGTH = 65;
     private static final String SETTING_TEMPLATE = " %s%-35.35s\033[0m %-" + SETTING_DESC_LENGTH + "s %n";
 
@@ -19,20 +19,19 @@ public class SQLDocDriver {
             String title = SQLDocSettings.getSetting("title");
 
             // Re-build command to make flag detection easier
-            for (String s : args)
-                cmd.append(String.format(!cmd.isEmpty() ? " %s" : "%s", s));
+            cmd = String.join(" ", args);
 
             // Print help
             if (args.length > 0 && (args[0].equals("-help") || args[0].equals("-h"))) {
                 printHelp();
                 return;
-            } else if (cmd.indexOf("settings") > -1) { // List settings
+            } else if (cmd.contains("settings")) { // List settings
                 SQLDocSettings.printSettings();
                 return;
-            } else if (cmd.indexOf("reset") > -1) { // Reset settings
+            } else if (cmd.contains("reset")) { // Reset settings
                 SQLDocSettings.resetToDefault();
                 return;
-            } else if (cmd.indexOf("set ") > -1) { // Update settings
+            } else if (cmd.contains("set ")) { // Update settings
                 SQLDocSettings.updateSettings(cmd.toString());
                 return;
             }
