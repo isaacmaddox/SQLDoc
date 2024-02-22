@@ -15,7 +15,7 @@ public class SQLField extends SQLEntity {
         Pattern defaultValuePattern = Pattern
                 .compile("DEFAULT (?<default>\".+\"|[^ ,]+),?\\n?", Pattern.CASE_INSENSITIVE);
         Matcher dm = defaultValuePattern.matcher(modifiers);
-        Pattern updateValuePattern = Pattern.compile("ON UPDATE(?: |\\n)+(?<action>\"[^\"]+\"| +)",
+        Pattern updateValuePattern = Pattern.compile("ON UPDATE[ \\n]+(?<action>\"[^\"]+\"| +)",
                 Pattern.CASE_INSENSITIVE);
         Matcher up = updateValuePattern.matcher(modifiers);
 

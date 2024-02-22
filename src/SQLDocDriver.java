@@ -32,7 +32,7 @@ public class SQLDocDriver {
                 SQLDocSettings.resetToDefault();
                 return;
             } else if (cmd.contains("set ")) { // Update settings
-                SQLDocSettings.updateSettings(cmd.toString());
+                SQLDocSettings.updateSettings(cmd);
                 return;
             }
 
@@ -117,7 +117,7 @@ public class SQLDocDriver {
     }
 
     private static boolean checkForFlag(String flag) {
-        return cmd.indexOf("-" + flag) > -1;
+        return cmd.contains("-" + flag);
     }
 
     public static void printError(String msg) {
